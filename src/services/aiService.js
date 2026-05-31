@@ -38,8 +38,8 @@ export const getExercises = async (prompt, numExercises, duration) => {
         }
     };
     
-    // Gemini 1.5 Flash endpoint
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    // Gemini Flash Latest endpoint
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
     
     const res = await fetch(url, {
         method: 'POST',
