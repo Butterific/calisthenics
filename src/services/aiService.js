@@ -25,7 +25,7 @@ export const getExercises = async (prompt, numExercises, duration) => {
     // Gemini Flash Latest endpoint
     const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent?key=${apiKey}`;
     
-    const res = await fetch(url, {
+    let res = await fetch(url, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'
@@ -34,8 +34,21 @@ export const getExercises = async (prompt, numExercises, duration) => {
     });
 
     if(!res.ok){
-       const errorData = await res.json().catch(()=>({}));
-       throw new Error(`AI Request failed with status ${res.status}: ${JSON.stringify(errorData)}`);
+       console.warn(`Primary model failed with status ${res.status}. Falling back to gemini-2.5-flash...`);
+       // Fallback to gemini-2.5-flash
+       const fallbackUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${apiKey}`;
+       res = await fetch(fallbackUrl, {
+           method: 'POST',
+           headers: {
+               'Content-Type': 'application/json'
+           },
+           body: JSON.stringify(payload)
+       });
+       
+       if(!res.ok) {
+           const errorData = await res.json().catch(()=>({}));
+           throw new Error(`AI Request (fallback) failed with status ${res.status}: ${JSON.stringify(errorData)}`);
+       }
     }
 
     const data = await res.json();
