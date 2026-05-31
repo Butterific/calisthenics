@@ -1,0 +1,71 @@
+// Mock Data Strategy 
+
+export const mockGetExercises = (prompt, numExercises, duration) => {
+    console.log("MOCK RUN: Returning dummy AI workout data");
+    const exercises = [];
+    for(let i = 0; i < numExercises; i++){
+        exercises.push({
+            name: `Mock Exercise ${i+1}`,
+            duration: duration
+        });
+    }
+    return Promise.resolve(exercises);
+};
+
+export const getExercises = async (prompt, numExercises, duration) => {
+    // Check if we are in mock mode? Or we can just build this function assuming Live Mode,
+    // and let the caller decide which to use.
+    const apiKey = import.meta.env.VITE_GEMINI;
+    if(!apiKey) {
+        throw new Error("Missing VITE_GEMINI API key. Setup your .env file.");
+    }
+
+    const payload = {
+        contents: [
+            {
+                role: "user",
+                parts: [
+                    {
+                        text: `You are a fitness expert AI. The user wants a workout for: "${prompt}". Generate ${numExercises} exercises, each taking ${duration} seconds.
+                        Return ONLY a JSON array of objects. Each object must have a "name" string property with the exercise name (e.g. "Jumping Jacks"), and a "duration" number property with the value of ${duration}. Do not wrap in markdown \`\`\`json or add other text.`
+                    }
+                ]
+            }
+        ],
+        generationConfig: {
+            temperature: 0.7,
+            responseMimeType: "application/json"
+        }
+    };
+    
+    // Gemini 1.5 Flash endpoint
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${apiKey}`;
+    
+    const res = await fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+    });
+
+    if(!res.ok){
+       const errorData = await res.json().catch(()=>({}));
+       throw new Error(`AI Request failed with status ${res.status}: ${JSON.stringify(errorData)}`);
+    }
+
+    const data = await res.json();
+    try {
+        let text = data.candidates[0].content.parts[0].text;
+        text = text.trim();
+        if (text.startsWith('\`\`\`json')){
+           text = text.slice(7, -3);
+        } else if (text.startsWith('\`\`\`')) {
+           text = text.slice(3, -3);
+        }
+        
+        return JSON.parse(text);
+    } catch(e) {
+        throw new Error("Failed to parse Gemini response: " + e.message);
+    }
+}
