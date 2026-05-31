@@ -8,8 +8,8 @@ import { getVideoForExercise, mockGetVideo } from './services/videoService';
 import { generateWorkoutVideo } from './services/ffmpegService';
 
 // Ensure you have these configured in a .env file locally for API requests:
-// VITE_GEMINI=...
-// VITE_PLEX=...
+// GEMINI=...
+// PLEX=...
 
 export default function App() {
   const [prompt, setPrompt] = useState('An intense core workout');
@@ -109,7 +109,7 @@ export default function App() {
             />
           </Box>
           <Typography variant="body2" color="text.secondary">
-            {isMockMode ? "Mock Mode is enabled. We will use dummy responses and avoid making API calls to Gemini and Pexels to preserve limits." : "Live API Mode enabled. This requires VITE_GEMINI and VITE_PLEX keys in your .env file."}
+            {isMockMode ? "Mock Mode is enabled. We will use dummy responses and avoid making API calls to Gemini and Pexels to preserve limits." : "Live API Mode enabled. This requires GEMINI and PLEX keys in your .env file or host secrets."}
           </Typography>
 
           <TextField 

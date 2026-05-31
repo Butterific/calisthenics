@@ -15,9 +15,9 @@ export const mockGetExercises = (prompt, numExercises, duration) => {
 export const getExercises = async (prompt, numExercises, duration) => {
     // Check if we are in mock mode? Or we can just build this function assuming Live Mode,
     // and let the caller decide which to use.
-    const apiKey = import.meta.env.VITE_GEMINI;
+    const apiKey = import.meta.env.GEMINI;
     if(!apiKey) {
-        throw new Error("Missing VITE_GEMINI API key. Setup your .env file.");
+        throw new Error("Missing GEMINI API key. Setup your .env file or Cloudflare secrets.");
     }
 
     const payload = {

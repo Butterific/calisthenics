@@ -8,9 +8,9 @@ export const mockGetVideo = (exerciseName) => {
 }
 
 export const getVideoForExercise = async (exerciseName) => {
-    const apiKey = import.meta.env.VITE_PLEX;
+    const apiKey = import.meta.env.PLEX;
     if(!apiKey) {
-        throw new Error("Missing VITE_PLEX API key. Setup your .env file.");
+        throw new Error("Missing PLEX API key. Setup your .env file or Cloudflare secrets.");
     }
     
     // query Pexels
