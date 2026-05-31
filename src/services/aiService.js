@@ -1,20 +1,4 @@
-// Mock Data Strategy 
-
-export const mockGetExercises = (prompt, numExercises, duration) => {
-    console.log("MOCK RUN: Returning dummy AI workout data");
-    const exercises = [];
-    for(let i = 0; i < numExercises; i++){
-        exercises.push({
-            name: `Mock Exercise ${i+1}`,
-            duration: duration
-        });
-    }
-    return Promise.resolve(exercises);
-};
-
 export const getExercises = async (prompt, numExercises, duration) => {
-    // Check if we are in mock mode? Or we can just build this function assuming Live Mode,
-    // and let the caller decide which to use.
     const apiKey = import.meta.env.GEMINI;
     if(!apiKey) {
         throw new Error("Missing GEMINI API key. Setup your .env file or Cloudflare secrets.");

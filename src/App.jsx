@@ -1,10 +1,10 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { Container, Typography, TextField, Button, Box, MenuItem, LinearProgress, Paper, Card, CardMedia, CardContent, Switch, FormControlLabel } from '@mui/material';
+import { Container, Typography, TextField, Button, Box, MenuItem, LinearProgress, Paper, Card, CardMedia, CardContent } from '@mui/material';
 import { FFmpeg } from '@ffmpeg/ffmpeg';
 import { toBlobURL } from '@ffmpeg/util';
 
-import { getExercises, mockGetExercises } from './services/aiService';
-import { getVideoForExercise, mockGetVideo } from './services/videoService';
+import { getExercises } from './services/aiService';
+import { getVideoForExercise } from './services/videoService';
 import { generateWorkoutVideo } from './services/ffmpegService';
 
 // Ensure you have these configured in a .env file locally for API requests:
@@ -20,8 +20,6 @@ export default function App() {
   const [loading, setLoading] = useState(false);
   const [statusMsg, setStatusMsg] = useState('');
   const [videoUrl, setVideoUrl] = useState(null);
-  
-  const [isMockMode, setIsMockMode] = useState(true);
 
   const ffmpegRef = useRef(new FFmpeg());
   const [ready, setReady] = useState(false);
@@ -54,17 +52,13 @@ export default function App() {
     setStatusMsg("Querying AI for exercise routine...");
     
     try {
-        const exercises = isMockMode 
-            ? await mockGetExercises(prompt, numExercises, duration)
-            : await getExercises(prompt, numExercises, duration);
+        const exercises = await getExercises(prompt, numExercises, duration);
 
         setStatusMsg(`Got ${exercises.length} exercises. Locating stock footage...`);
         
         let videoLinks = [];
         for (let ex of exercises) {
-            const link = isMockMode 
-                ? await mockGetVideo(ex.name)
-                : await getVideoForExercise(ex.name);
+            const link = await getVideoForExercise(ex.name);
             videoLinks.push(link);
         }
 
@@ -103,13 +97,9 @@ export default function App() {
           
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6" fontWeight="bold">Configuration</Typography>
-            <FormControlLabel 
-              control={<Switch checked={isMockMode} onChange={(e) => setIsMockMode(e.target.checked)} color="secondary" />} 
-              label={<Typography fontWeight="bold" color="secondary">Mock Mode (Free Tier Safe)</Typography>} 
-            />
           </Box>
           <Typography variant="body2" color="text.secondary">
-            {isMockMode ? "Mock Mode is enabled. We will use dummy responses and avoid making API calls to Gemini and Pexels to preserve limits." : "Live API Mode enabled. This requires GEMINI and PLEX keys in your .env file or host secrets."}
+            Live API Mode enabled. This requires GEMINI and PLEX keys in your .env file or host secrets.
           </Typography>
 
           <TextField 

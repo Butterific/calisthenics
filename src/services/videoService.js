@@ -1,12 +1,5 @@
 // Pexels API Wrapper for fetching fitness videos
 
-export const mockGetVideo = (exerciseName) => {
-    // Return a sample small video URL to prevent blowing up the network
-    console.log(`MOCK Pexels: fetched generic mock clip for ${exerciseName}`);
-    // Example test video (Big Buck Bunny snippet)
-    return Promise.resolve("https://commondatastorage.googleapis.com/gtv-videos-bucket/sample/ForBiggerBlazes.mp4");
-}
-
 export const getVideoForExercise = async (exerciseName) => {
     const apiKey = import.meta.env.PLEX;
     if(!apiKey) {
