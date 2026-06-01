@@ -88,9 +88,12 @@ export default function App() {
 
   return (
     <Container maxWidth="md" sx={{ py: 4 }}>
-      <Typography variant="h3" component="h1" gutterBottom color="primary.main" fontWeight={700}>
-        Hackathon: AI Video Generator
-      </Typography>
+      <Box display="flex" alignItems="center" gap={2} mb={2}>
+        <img src="/logo.svg" alt="Calisthenics Logo" width="48" height="48" style={{ color: '#6750A4' }} />
+        <Typography variant="h3" component="h1" color="primary.main" fontWeight={700} sx={{ margin: 0 }}>
+          Calisthenics
+        </Typography>
+      </Box>
       
       <Typography variant="subtitle1" color="text.secondary" paragraph>
         Turn any fitness prompt into a full, dynamic exercise video complete with looping footage, timers, title overlays, and changing background tracks. Processed 100% locally in your browser.
