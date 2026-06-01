@@ -10,7 +10,7 @@ Built for HackJPS 2026
 
 ## 🚀 Getting Started
 
-Since the browser dictates strict security headers to handle WebAssembly operations involving shared memory (`SharedArrayBuffer`), you cannot run this off a static file server easily. Use our Vite setup!
+Since the browser dictates strict security headers to handle WebAssembly operations involving shared memory (`SharedArrayBuffer`), you cannot run this off a static file server easily. Use the Vite setup!
 
 ### 1. Install Dependencies
 Make sure you have Node >18.x installed and simply run:
@@ -40,6 +40,7 @@ Open **http://localhost:5173**.
 - **React + Vite**
 - **MUI (Material UI)** 
 - **Google Gemini API** (via standard `fetch`)
+-# generated with ezread
 - **Pexels API**
 - **FFmpeg.WASM**
 
