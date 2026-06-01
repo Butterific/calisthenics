@@ -103,7 +103,7 @@ export default function App() {
       </Typography>
 
       <Paper elevation={3} sx={{ p: 6, mb: 6, borderRadius: 3 }}>
-        <Box display="flex" flexDirection="column" gap={5}>
+        <Box display="flex" flexDirection="column" gap={6}>
           
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6" fontWeight="bold">Configuration</Typography>
@@ -118,7 +118,7 @@ export default function App() {
             disabled={loading}
           />
 
-          <Box display="flex" gap={4} flexWrap="wrap">
+          <Box display="flex" gap={5} flexWrap="wrap">
             <TextField 
               label="Number of Exercises" 
               type="number" 
