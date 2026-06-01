@@ -143,10 +143,10 @@ export default function App() {
               disabled={loading}
               sx={{ flex: '1 1 200px' }}
             >
-              <MenuItem value="360p">360p (Lightning Fast - Demo)</MenuItem>
-              <MenuItem value="480p">480p (Fast)</MenuItem>
-              <MenuItem value="720p">720p (Normal)</MenuItem>
-              <MenuItem value="1080p">1080p (Slow)</MenuItem>
+              <MenuItem value="360p">360p (🐇)</MenuItem>
+              <MenuItem value="480p">480p (decently fast)</MenuItem>
+              <MenuItem value="720p">720p (slow)</MenuItem>
+              <MenuItem value="1080p">1080p (🐢)</MenuItem>
             </TextField>
           </Box>
 
