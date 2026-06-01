@@ -45,3 +45,4 @@ Open **http://localhost:5173**.
 - **FFmpeg.WASM**
 
 Happy exercising! 💪
+> generated with ezread
