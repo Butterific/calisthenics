@@ -120,7 +120,7 @@ export default function App() {
 
           <Box
             display="grid"
-            gridTemplateColumns={{ xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' }}
+            gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr 1.25fr' }}
             gap={2}
           >
             <TextField 
@@ -129,6 +129,7 @@ export default function App() {
               value={numExercises}
               onChange={(e) => setNumExercises(Number(e.target.value))}
               disabled={loading}
+              sx={{ minWidth: 0 }}
             />
             <TextField 
               label="Duration (seconds per exercise)" 
@@ -136,6 +137,7 @@ export default function App() {
               value={duration}
               onChange={(e) => setDuration(Number(e.target.value))}
               disabled={loading}
+              sx={{ minWidth: 0 }}
             />
             <TextField 
               label="Quality" 
@@ -143,6 +145,7 @@ export default function App() {
               value={quality}
               onChange={(e) => setQuality(e.target.value)}
               disabled={loading}
+              sx={{ minWidth: 0 }}
             >
               <MenuItem value="360p">360p (Lightning Fast - Demo)</MenuItem>
               <MenuItem value="480p">480p (Fast)</MenuItem>
