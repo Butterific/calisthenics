@@ -38,7 +38,7 @@ export default function App() {
       
       await ffmpeg.load({
         coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-        wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
+        wasmURL: await toBlobURL(`${baseURL}/wasmURL/ffmpeg-core.wasm`, 'application/wasm'),
       });
       setReady(true);
     };
@@ -84,7 +84,7 @@ export default function App() {
         console.error(e);
         setStatusMsg("Error occurred: " + e.message);
     } finally {
-        setLoading(false);
+        loading && setLoading(false);
     }
   };
 
@@ -102,8 +102,8 @@ export default function App() {
         <span className="rainbow-word">trAIning</span>.
       </Typography>
 
-      <Paper elevation={3} sx={{ p: { xs: 3, sm: 5, md: 7 }, mb: 6, borderRadius: 3 }}>
-        <Box display="flex" flexDirection="column" gap={3}>
+      <Paper elevation={3} sx={{ p: { xs: 3, sm: 5 }, mb: 6, borderRadius: 3 }}>
+        <Box display="flex" flexDirection="column" gap={3.5}>
           
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6" fontWeight="bold">Configuration</Typography>
@@ -121,7 +121,7 @@ export default function App() {
           <Box
             display="grid"
             gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr 1.25fr' }}
-            gap={2}
+            gap={2.5}
           >
             <TextField 
               label="Number of Exercises" 
@@ -159,27 +159,31 @@ export default function App() {
             size="large" 
             onClick={handleGenerate} 
             disabled={loading || !ready}
-            sx={{ py: 1.5, mt: 2, fontSize: '1.2rem', borderRadius: '9999px' }}
+            sx={{ py: 1.75, mt: 1, fontSize: '1.1rem', borderRadius: '9999px' }}
           >
             {loading ? "Processing..." : (ready ? "Generate Workout Video" : "Loading FFmpeg Engine...")}
           </Button>
 
-          {loading && (
-            <Box mt={2}>
-              <Typography variant="body2" sx={{ mb: 1, fontFamily: 'monospace' }}>
-                &gt; {statusMsg} {progressRatio >= 0 && `(${Math.round(progressRatio * 100)}%)`}
-              </Typography>
-              <LinearProgress 
-                variant={progressRatio >= 0 ? "determinate" : "indeterminate"} 
-                value={progressRatio >= 0 ? progressRatio * 100 : 0} 
-              />
-            </Box>
-          )}
+          {(loading || statusMsg) && (
+            <Box mt={1} pt={1}>
+              {loading && (
+                <>
+                  <Typography variant="body2" sx={{ mb: 1.5, fontFamily: 'monospace' }}>
+                    &gt; {statusMsg} {progressRatio >= 0 && `(${Math.round(progressRatio * 100)}%)`}
+                  </Typography>
+                  <LinearProgress 
+                    variant={progressRatio >= 0 ? "determinate" : "indeterminate"} 
+                    value={progressRatio >= 0 ? progressRatio * 100 : 0} 
+                  />
+                </>
+              )}
 
-          {!loading && statusMsg && (
-             <Typography variant="body2" color={statusMsg.includes("Error") ? "error.main" : "success.main"} fontWeight="bold">
-               {statusMsg}
-             </Typography>
+              {!loading && statusMsg && (
+                 <Typography variant="body2" color={statusMsg.includes("Error") ? "error.main" : "success.main"} fontWeight="bold">
+                   {statusMsg}
+                 </Typography>
+              )}
+            </Box>
           )}
 
         </Box>
@@ -187,8 +191,8 @@ export default function App() {
 
       {videoUrl && (
         <Card elevation={5} sx={{ borderRadius: 3, overflow: 'hidden' }}>
-            <CardContent sx={{ pb: 0 }}>
-                <Typography variant="h5" gutterBottom fontWeight="bold">Your Generated Workout</Typography>
+            <CardContent sx={{ pb: 2 }}>
+                <Typography variant="h5" fontWeight="bold">Your Generated Workout</Typography>
             </CardContent>
             <CardMedia
                 component="video"
