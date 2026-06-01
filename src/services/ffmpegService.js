@@ -13,46 +13,67 @@ export const generateWorkoutVideo = async (ffmpeg, exercises, videoLinks, qualit
     // Load font
     await ffmpeg.writeFile('arial.ttf', await fetchFile(FONT_URL));
 
-    let filterGraph = "";
-    let inputs = [];
-    const totalDuration = exercises.reduce((acc, ex) => acc + ex.duration, 0);
+    let scale;
+    if (quality === '1080p') scale = '1920:1080';
+    else if (quality === '720p') scale = '1280:720';
+    else if (quality === '480p') scale = '854:480';
+    else scale = '640:360';
 
-    onProgress("Downloading clip assets...");
+    const totalDuration = exercises.reduce((acc, ex) => acc + ex.duration, 0);
+    let tsFiles = [];
+
+    // Listen to FFmpeg logs if needed
+    ffmpeg.on('log', ({ message }) => {
+        // console.log(message);
+    });
+
     for(let i=0; i<exercises.length; i++) {
+        onProgress(`Processing exercise ${i+1}/${exercises.length}: ${exercises[i].name}...`);
         const url = videoLinks[i];
         const localName = `input_${i}.mp4`;
         await ffmpeg.writeFile(localName, await fetchFile(url));
-        inputs.push(localName);
         
-        // Build video filter part: 
-        // 1. Loop over the clip to hit the exercise duration (in case clip is too short)
-        // 2. Set scale (quality mapping) e.g., 1920:1080 or 1280:720
-        // 3. Draw text (Title at the top, countdown timer at the bottom right)
-        
-        let scale;
-        if (quality === '1080p') scale = '1920:1080';
-        else if (quality === '720p') scale = '1280:720';
-        else if (quality === '480p') scale = '854:480';
-        else scale = '640:360';
-        
-        filterGraph += `[${i}:v]loop=loop=-1:size=32767,trim=duration=${exercises[i].duration},scale=${scale}:force_original_aspect_ratio=increase,crop=${scale},setsar=1,`;
+        let filterGraph = `scale=${scale}:force_original_aspect_ratio=increase,crop=${scale},setsar=1,`;
         // Text overlay: Exercise Name
         filterGraph += `drawtext=fontfile=arial.ttf:text='${exercises[i].name}':fontcolor=white:fontsize=72:box=1:boxcolor=black@0.5:boxborderw=10:x=(w-text_w)/2:y=100,`;
-        // Timer overlay: Countdown
-        // time runs from 0 to duration. Let's do (duration - t) to get countdown
-        filterGraph += `drawtext=fontfile=arial.ttf:text='%{eif\\:${exercises[i].duration}-t\\:d} s':fontcolor=white:fontsize=96:box=1:boxcolor=red@0.8:boxborderw=15:x=w-text_w-50:y=h-text_h-50[v${i}];`;
+        // Timer overlay: Countdown (Top Right, smaller)
+        filterGraph += `drawtext=fontfile=arial.ttf:text='%{eif\\:${exercises[i].duration}-t\\:d} s':fontcolor=white:fontsize=48:box=1:boxcolor=red@0.8:boxborderw=10:x=w-text_w-30:y=30`;
+
+        const outName = `part_${i}.ts`;
+        tsFiles.push(outName);
+
+        const progressHandler = ({ progress }) => {
+            if (onRatio) {
+                // Calculate overall ratio for the entire batch
+                const globalProgress = (i + Math.min(progress, 1)) / exercises.length;
+                onRatio(globalProgress);
+            }
+        };
+        ffmpeg.on('progress', progressHandler);
+
+        // Run individual process to .ts to avoid memory exhaustion
+        await ffmpeg.exec([
+            "-stream_loop", "-1", // loop indefinitely
+            "-i", localName,
+            "-t", `${exercises[i].duration}`,
+            "-vf", filterGraph,
+            "-c:v", "libx264",
+            "-preset", "ultrafast",
+            "-tune", "fastdecode,zerolatency",
+            "-r", "15",
+            "-crf", "35",
+            "-an", // No audio yet
+            "-y",
+            outName
+        ]);
+        
+        ffmpeg.off('progress', progressHandler);
+
+        // Clean up input to save WASM heap memory
+        await ffmpeg.deleteFile(localName);
     }
 
-    // Concat all video branches
-    let concatStr = "";
-    for(let i=0; i<exercises.length; i++){
-        concatStr += `[v${i}]`;
-    }
-    filterGraph += `${concatStr}concat=n=${exercises.length}:v=1:a=0[outv];`;
-
-    onProgress("Fetching audio loop...");
-    // Let's use a sample audio since getting random files from a raw directory via fetch isn't straightforward without a manifest.
-    // Hackathon trick: statically fetch a random music file since we know there are 5.
+    onProgress("Fetching audio track...");
     const randomTrackId = Math.floor(Math.random() * 5) + 1;
     const trackFile = `fitness-${randomTrackId}.m4a`;
     const audioLocalStr = `audio.m4a`;
@@ -63,51 +84,32 @@ export const generateWorkoutVideo = async (ffmpeg, exercises, videoLinks, qualit
         await ffmpeg.writeFile(audioLocalStr, await fetchFile('https://files.freemusicarchive.org/storage-freemusicarchive-org/music/no_curator/Tours/Enthusiast/Tours_-_01_-_Enthusiast.mp3'));
     }
 
-    // Audio filter: loop indefinitely, trim to totalDuration
-    const audioIndex = exercises.length;
-    filterGraph += `[${audioIndex}:a]aloop=loop=-1:size=2e+09,atrim=duration=${totalDuration}[outa]`;
+    onProgress("Merging audio and rendering final file (Instant)...");
+    
+    // Combine intermediate files with zero re-encoding using concat demuxer
+    const concatList = tsFiles.join('|');
+    
+    if (onRatio) onRatio(0.99);
 
-    // Construct args
-    let args = [];
-    // Inputs (videos)
-    for(let i=0; i<exercises.length; i++){
-        args.push("-i", inputs[i]);
-    }
-    // Input (audio)
-    args.push("-i", audioLocalStr);
-
-    args.push(
-        "-filter_complex", filterGraph,
-        "-map", "[outv]",
-        "-map", "[outa]",
-        "-c:v", "libx264",
-        "-preset", "ultrafast",
-        "-tune", "fastdecode,zerolatency",
-        "-r", "20",
-        "-crf", "30",
+    await ffmpeg.exec([
+        "-i", `concat:${concatList}`,
+        "-stream_loop", "-1",
+        "-i", audioLocalStr,
+        "-t", `${totalDuration}`,
+        "-c:v", "copy",   // COPY video - insanely fast
         "-c:a", "aac",
+        "-map", "0:v:0",
+        "-map", "1:a:0",
         "-y",
         "output.mp4"
-    );
-
-    onProgress("Running FFmpeg Engine (this will take a while)...");
-    
-    // Listen to FFmpeg logs if needed
-    ffmpeg.on('log', ({ message }) => {
-        console.log(message);
-    });
-
-    const progressHandler = ({ progress, time }) => {
-        if (onRatio) onRatio(progress);
-    };
-    ffmpeg.on('progress', progressHandler);
-
-    await ffmpeg.exec(args);
-
-    ffmpeg.off('progress', progressHandler);
+    ]);
 
     onProgress("Finishing and formatting export...");
     const data = await ffmpeg.readFile('output.mp4');
+    
+    // Clean up to prevent memleaks
+    for(let f of tsFiles) await ffmpeg.deleteFile(f);
+    await ffmpeg.deleteFile(audioLocalStr);
     
     const blob = new Blob([data.buffer], { type: 'video/mp4' });
     const finalUrl = URL.createObjectURL(blob);
