@@ -34,10 +34,10 @@ export const generateWorkoutVideo = async (ffmpeg, exercises, videoLinks, qualit
         await ffmpeg.writeFile(localName, await fetchFile(url));
         
         let filterGraph = `scale=${scale}:force_original_aspect_ratio=increase,crop=${scale},setsar=1,`;
-        // Text overlay: Exercise Name
-        filterGraph += `drawtext=fontfile=arial.ttf:text='${exercises[i].name}':fontcolor=white:fontsize=72:box=1:boxcolor=black@0.5:boxborderw=10:x=(w-text_w)/2:y=100,`;
+        // Text overlay: Exercise Name (Bottom Center, smaller text to prevent cutoff)
+        filterGraph += `drawtext=fontfile=arial.ttf:text='${exercises[i].name}':fontcolor=white:fontsize=40:box=1:boxcolor=black@0.5:boxborderw=10:x=(w-text_w)/2:y=h-80,`;
         // Timer overlay: Countdown (Top Right, smaller)
-        filterGraph += `drawtext=fontfile=arial.ttf:text='%{eif\\:${exercises[i].duration}-t\\:d} s':fontcolor=white:fontsize=48:box=1:boxcolor=red@0.8:boxborderw=10:x=w-text_w-30:y=30`;
+        filterGraph += `drawtext=fontfile=arial.ttf:text='%{eif\\:${exercises[i].duration}-t\\:d} s':fontcolor=white:fontsize=32:box=1:boxcolor=red@0.8:boxborderw=8:x=w-text_w-20:y=20`;
 
         const outName = `part_${i}.ts`;
         tsFiles.push(outName);

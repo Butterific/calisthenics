@@ -22,8 +22,8 @@ export const getVideoForExercise = async (exerciseName) => {
     const data = await res.json();
     if(data.videos && data.videos.length > 0) {
         const videoFiles = data.videos[0].video_files;
-        // Try to pick HD (1080p) or highest available
-        const preferred = videoFiles.find(v => v.height >= 1080) || videoFiles[0];
+        // Sort smallest to largest, try to pick SD/720p to prevent WebAssembly memory crashes
+        const preferred = videoFiles.sort((a,b) => a.height - b.height).find(v => v.height >= 360 && v.height <= 720) || videoFiles.sort((a,b) => a.height - b.height)[0];
         return preferred.link;
     }
     
