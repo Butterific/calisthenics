@@ -99,11 +99,11 @@ export default function App() {
       
       <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 6 }} paragraph>
         Turn any fitness prompt into a full, dynamic exercise video to help your{' '}
-        <span className="rainbow-word">training</span>.
+        <span className="rainbow-word">trAIning</span>.
       </Typography>
 
-      <Paper elevation={3} sx={{ p: 6, mb: 6, borderRadius: 3 }}>
-        <Box display="flex" flexDirection="column" gap={6}>
+      <Paper elevation={3} sx={{ p: 7, mb: 6, borderRadius: 3 }}>
+        <Box display="flex" flexDirection="column" gap={8}>
           
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6" fontWeight="bold">Configuration</Typography>
@@ -118,7 +118,7 @@ export default function App() {
             disabled={loading}
           />
 
-          <Box display="flex" gap={5} flexWrap="wrap">
+          <Box display="flex" gap={6} flexWrap="wrap">
             <TextField 
               label="Number of Exercises" 
               type="number" 
