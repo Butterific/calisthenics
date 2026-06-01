@@ -13,9 +13,9 @@ import { generateWorkoutVideo } from './services/ffmpegService';
 
 export default function App() {
   const [prompt, setPrompt] = useState('An intense core workout');
-  const [numExercises, setNumExercises] = useState(3);
-  const [duration, setDuration] = useState(10);
-  const [quality, setQuality] = useState('720p');
+  const [numExercises, setNumExercises] = useState(2);
+  const [duration, setDuration] = useState(5);
+  const [quality, setQuality] = useState('360p');
   
   const [loading, setLoading] = useState(false);
   const [statusMsg, setStatusMsg] = useState('');
@@ -143,8 +143,10 @@ export default function App() {
               disabled={loading}
               sx={{ flex: 1 }}
             >
-              <MenuItem value="720p">720p (Faster)</MenuItem>
-              <MenuItem value="1080p">1080p (Slower)</MenuItem>
+              <MenuItem value="360p">360p (Lightning Fast - Demo)</MenuItem>
+              <MenuItem value="480p">480p (Fast)</MenuItem>
+              <MenuItem value="720p">720p (Normal)</MenuItem>
+              <MenuItem value="1080p">1080p (Slow)</MenuItem>
             </TextField>
           </Box>
 

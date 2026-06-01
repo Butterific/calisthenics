@@ -29,7 +29,11 @@ export const generateWorkoutVideo = async (ffmpeg, exercises, videoLinks, qualit
         // 2. Set scale (quality mapping) e.g., 1920:1080 or 1280:720
         // 3. Draw text (Title at the top, countdown timer at the bottom right)
         
-        const scale = quality === '1080p' ? '1920:1080' : '1280:720';
+        let scale;
+        if (quality === '1080p') scale = '1920:1080';
+        else if (quality === '720p') scale = '1280:720';
+        else if (quality === '480p') scale = '854:480';
+        else scale = '640:360';
         
         filterGraph += `[${i}:v]loop=loop=-1:size=32767,trim=duration=${exercises[i].duration},scale=${scale}:force_original_aspect_ratio=increase,crop=${scale},setsar=1,`;
         // Text overlay: Exercise Name
@@ -78,6 +82,9 @@ export const generateWorkoutVideo = async (ffmpeg, exercises, videoLinks, qualit
         "-map", "[outa]",
         "-c:v", "libx264",
         "-preset", "ultrafast",
+        "-tune", "fastdecode,zerolatency",
+        "-r", "20",
+        "-crf", "30",
         "-c:a", "aac",
         "-y",
         "output.mp4"
