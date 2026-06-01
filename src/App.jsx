@@ -103,7 +103,7 @@ export default function App() {
       </Typography>
 
       <Paper elevation={3} sx={{ p: { xs: 3, sm: 5 }, mb: 6, borderRadius: 3 }}>
-        <Box display="flex" flexDirection="column" gap={3.5}>
+        <Box display="flex" flexDirection="column" gap={4.5}>
           
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6" fontWeight="bold">Configuration</Typography>
@@ -121,7 +121,8 @@ export default function App() {
           <Box
             display="grid"
             gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr 1.25fr' }}
-            gap={2.5}
+            columnGap={4}
+            rowGap={3}
           >
             <TextField 
               label="Number of Exercises" 
