@@ -1,9 +1,6 @@
 ﻿# 🏋️‍♂️ AI Video Exercise Generator
 Built for HackJPS 2026
 
-
-Welcome to our project! This is a completely **serverless**, browser-based AI video generator built for a hackathon. You type in a prompt, and the app uses Gemini to design a workout, fetches stock footage from Pexels, and magically stitches it all together right in your web browser using FFmpeg WebAssembly. No backend needed! 🎉
-
 ## ✨ Features
 - **Material 3 UI**: Beautiful, clean, and intuitive user interface built with `@mui/material`.
 - **Zero-Backend Video Generation**: Uses `@ffmpeg/ffmpeg` compiled to WASM. Your browser acts as the rendering server!
