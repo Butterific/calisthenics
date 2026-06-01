@@ -38,7 +38,7 @@ export default function App() {
       
       await ffmpeg.load({
         coreURL: await toBlobURL(`${baseURL}/ffmpeg-core.js`, 'text/javascript'),
-        wasmURL: await toBlobURL(`${baseURL}/wasmURL/ffmpeg-core.wasm`, 'application/wasm'),
+        wasmURL: await toBlobURL(`${baseURL}/ffmpeg-core.wasm`, 'application/wasm'),
       });
       setReady(true);
     };
@@ -84,7 +84,7 @@ export default function App() {
         console.error(e);
         setStatusMsg("Error occurred: " + e.message);
     } finally {
-        loading && setLoading(false);
+        setLoading(false);
     }
   };
 
@@ -99,11 +99,11 @@ export default function App() {
       
       <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 6 }} paragraph>
         Turn any fitness prompt into a full, dynamic exercise video to help your{' '}
-        <span className="rainbow-word">trAIning</span>.
+        <span className="rainbow-word">training</span>.
       </Typography>
 
-      <Paper elevation={3} sx={{ p: { xs: 3, sm: 5 }, mb: 6, borderRadius: 3 }}>
-        <Box display="flex" flexDirection="column" gap={4.5}>
+      <Paper elevation={3} sx={{ p: 6, mb: 6, borderRadius: 3 }}>
+        <Box display="flex" flexDirection="column" gap={6}>
           
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6" fontWeight="bold">Configuration</Typography>
@@ -118,19 +118,14 @@ export default function App() {
             disabled={loading}
           />
 
-          <Box
-            display="grid"
-            gridTemplateColumns={{ xs: '1fr', sm: '1fr 1fr 1.25fr' }}
-            columnGap={4}
-            rowGap={3}
-          >
+          <Box display="flex" gap={5} flexWrap="wrap">
             <TextField 
               label="Number of Exercises" 
               type="number" 
               value={numExercises}
               onChange={(e) => setNumExercises(Number(e.target.value))}
               disabled={loading}
-              sx={{ minWidth: 0 }}
+              sx={{ flex: '1 1 200px' }}
             />
             <TextField 
               label="Duration (seconds per exercise)" 
@@ -138,7 +133,7 @@ export default function App() {
               value={duration}
               onChange={(e) => setDuration(Number(e.target.value))}
               disabled={loading}
-              sx={{ minWidth: 0 }}
+              sx={{ flex: '1 1 200px' }}
             />
             <TextField 
               label="Quality" 
@@ -146,7 +141,7 @@ export default function App() {
               value={quality}
               onChange={(e) => setQuality(e.target.value)}
               disabled={loading}
-              sx={{ minWidth: 0 }}
+              sx={{ flex: '1 1 200px' }}
             >
               <MenuItem value="360p">360p (Lightning Fast - Demo)</MenuItem>
               <MenuItem value="480p">480p (Fast)</MenuItem>
@@ -160,31 +155,27 @@ export default function App() {
             size="large" 
             onClick={handleGenerate} 
             disabled={loading || !ready}
-            sx={{ py: 1.75, mt: 1, fontSize: '1.1rem', borderRadius: '9999px' }}
+            sx={{ py: 1.5, mt: 2, fontSize: '1.2rem', borderRadius: '9999px' }}
           >
             {loading ? "Processing..." : (ready ? "Generate Workout Video" : "Loading FFmpeg Engine...")}
           </Button>
 
-          {(loading || statusMsg) && (
-            <Box mt={1} pt={1}>
-              {loading && (
-                <>
-                  <Typography variant="body2" sx={{ mb: 1.5, fontFamily: 'monospace' }}>
-                    &gt; {statusMsg} {progressRatio >= 0 && `(${Math.round(progressRatio * 100)}%)`}
-                  </Typography>
-                  <LinearProgress 
-                    variant={progressRatio >= 0 ? "determinate" : "indeterminate"} 
-                    value={progressRatio >= 0 ? progressRatio * 100 : 0} 
-                  />
-                </>
-              )}
-
-              {!loading && statusMsg && (
-                 <Typography variant="body2" color={statusMsg.includes("Error") ? "error.main" : "success.main"} fontWeight="bold">
-                   {statusMsg}
-                 </Typography>
-              )}
+          {loading && (
+            <Box mt={2}>
+              <Typography variant="body2" sx={{ mb: 1, fontFamily: 'monospace' }}>
+                &gt; {statusMsg} {progressRatio >= 0 && `(${Math.round(progressRatio * 100)}%)`}
+              </Typography>
+              <LinearProgress 
+                variant={progressRatio >= 0 ? "determinate" : "indeterminate"} 
+                value={progressRatio >= 0 ? progressRatio * 100 : 0} 
+              />
             </Box>
+          )}
+
+          {!loading && statusMsg && (
+             <Typography variant="body2" color={statusMsg.includes("Error") ? "error.main" : "success.main"} fontWeight="bold">
+               {statusMsg}
+             </Typography>
           )}
 
         </Box>
@@ -192,8 +183,8 @@ export default function App() {
 
       {videoUrl && (
         <Card elevation={5} sx={{ borderRadius: 3, overflow: 'hidden' }}>
-            <CardContent sx={{ pb: 2 }}>
-                <Typography variant="h5" fontWeight="bold">Your Generated Workout</Typography>
+            <CardContent sx={{ pb: 0 }}>
+                <Typography variant="h5" gutterBottom fontWeight="bold">Your Generated Workout</Typography>
             </CardContent>
             <CardMedia
                 component="video"
