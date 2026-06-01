@@ -2,7 +2,7 @@ import { fetchFile } from '@ffmpeg/util';
 
 const FONT_URL = "https://raw.githubusercontent.com/ffmpegwasm/testdata/master/arial.ttf";
 
-export const generateWorkoutVideo = async (ffmpeg, exercises, videoLinks, quality, onProgress) => {
+export const generateWorkoutVideo = async (ffmpeg, exercises, videoLinks, quality, onProgress, onRatio) => {
     // Ensure FFmpeg is loaded
     if (!ffmpeg.loaded) {
         throw new Error("FFmpeg is not loaded.");
@@ -90,7 +90,14 @@ export const generateWorkoutVideo = async (ffmpeg, exercises, videoLinks, qualit
         console.log(message);
     });
 
+    const progressHandler = ({ progress, time }) => {
+        if (onRatio) onRatio(progress);
+    };
+    ffmpeg.on('progress', progressHandler);
+
     await ffmpeg.exec(args);
+
+    ffmpeg.off('progress', progressHandler);
 
     onProgress("Finishing and formatting export...");
     const data = await ffmpeg.readFile('output.mp4');

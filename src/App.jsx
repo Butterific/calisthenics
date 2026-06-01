@@ -19,6 +19,7 @@ export default function App() {
   
   const [loading, setLoading] = useState(false);
   const [statusMsg, setStatusMsg] = useState('');
+  const [progressRatio, setProgressRatio] = useState(-1);
   const [videoUrl, setVideoUrl] = useState(null);
 
   const ffmpegRef = useRef(new FFmpeg());
@@ -49,6 +50,7 @@ export default function App() {
     if (!prompt) return;
     setLoading(true);
     setVideoUrl(null);
+    setProgressRatio(-1);
     setStatusMsg("Querying AI for exercise routine...");
     
     try {
@@ -68,10 +70,12 @@ export default function App() {
             exercises, 
             videoLinks, 
             quality, 
-            (msg) => setStatusMsg(msg)
+            (msg) => setStatusMsg(msg),
+            (ratio) => setProgressRatio(ratio)
         );
 
         setVideoUrl(outputBlobUrl);
+        setProgressRatio(-1);
         setStatusMsg("Video rendering complete!");
         
     } catch (e) {
@@ -154,9 +158,12 @@ export default function App() {
           {loading && (
             <Box mt={2}>
               <Typography variant="body2" sx={{ mb: 1, fontFamily: 'monospace' }}>
-                &gt; {statusMsg}
+                &gt; {statusMsg} {progressRatio >= 0 && `(${Math.round(progressRatio * 100)}%)`}
               </Typography>
-              <LinearProgress />
+              <LinearProgress 
+                variant={progressRatio >= 0 ? "determinate" : "indeterminate"} 
+                value={progressRatio >= 0 ? progressRatio * 100 : 0} 
+              />
             </Box>
           )}
 
