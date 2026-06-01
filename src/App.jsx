@@ -102,8 +102,8 @@ export default function App() {
         <span className="rainbow-word">trAIning</span>.
       </Typography>
 
-      <Paper elevation={3} sx={{ p: 7, mb: 6, borderRadius: 3 }}>
-        <Box display="flex" flexDirection="column" gap={8}>
+      <Paper elevation={3} sx={{ p: { xs: 3, sm: 5, md: 7 }, mb: 6, borderRadius: 3 }}>
+        <Box display="flex" flexDirection="column" gap={3}>
           
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6" fontWeight="bold">Configuration</Typography>
@@ -118,14 +118,17 @@ export default function App() {
             disabled={loading}
           />
 
-          <Box display="flex" gap={6} flexWrap="wrap">
+          <Box
+            display="grid"
+            gridTemplateColumns={{ xs: '1fr', sm: 'repeat(3, minmax(0, 1fr))' }}
+            gap={2}
+          >
             <TextField 
               label="Number of Exercises" 
               type="number" 
               value={numExercises}
               onChange={(e) => setNumExercises(Number(e.target.value))}
               disabled={loading}
-              sx={{ flex: '1 1 200px' }}
             />
             <TextField 
               label="Duration (seconds per exercise)" 
@@ -133,7 +136,6 @@ export default function App() {
               value={duration}
               onChange={(e) => setDuration(Number(e.target.value))}
               disabled={loading}
-              sx={{ flex: '1 1 200px' }}
             />
             <TextField 
               label="Quality" 
@@ -141,7 +143,6 @@ export default function App() {
               value={quality}
               onChange={(e) => setQuality(e.target.value)}
               disabled={loading}
-              sx={{ flex: '1 1 200px' }}
             >
               <MenuItem value="360p">360p (Lightning Fast - Demo)</MenuItem>
               <MenuItem value="480p">480p (Fast)</MenuItem>
