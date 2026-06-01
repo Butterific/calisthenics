@@ -35,7 +35,8 @@ export const generateWorkoutVideo = async (ffmpeg, exercises, videoLinks, qualit
         else if (quality === '480p') scale = '854:480';
         else scale = '640:360';
         
-        filterGraph += `[${i}:v]loop=loop=-1:size=32767,trim=duration=${exercises[i].duration},scale=${scale}:force_original_aspect_ratio=increase,crop=${scale},setsar=1,`;
+        // Force framerate down to 15 EARLY so text rendering and scaling happens on fewer frames
+        filterGraph += `[${i}:v]loop=loop=-1:size=32767,trim=duration=${exercises[i].duration},fps=15,scale=${scale}:force_original_aspect_ratio=increase,crop=${scale},setsar=1,`;
         // Text overlay: Exercise Name
         filterGraph += `drawtext=fontfile=arial.ttf:text='${exercises[i].name}':fontcolor=white:fontsize=72:box=1:boxcolor=black@0.5:boxborderw=10:x=(w-text_w)/2:y=100,`;
         // Timer overlay: Countdown
@@ -82,8 +83,9 @@ export const generateWorkoutVideo = async (ffmpeg, exercises, videoLinks, qualit
         "-map", "[outa]",
         "-c:v", "libx264",
         "-preset", "ultrafast",
-        "-tune", "fastdecode,zerolatency",
-        "-r", "20",
+        "-threads", "4",
+        "-r", "15",
+        "-crf", "35
         "-crf", "30",
         "-c:a", "aac",
         "-y",
