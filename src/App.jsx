@@ -98,7 +98,7 @@ export default function App() {
       </Box>
       
       <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 6 }} paragraph>
-        Turn any fitness prompt into a full, dynamic exercise video complete with looping footage, timers, title overlays, and changing background tracks. Processed 100% locally in your browser.
+        Turn any fitness prompt into a full, dynamic exercise video 
       </Typography>
 
       <Paper elevation={3} sx={{ p: 6, mb: 6, borderRadius: 3 }}>
