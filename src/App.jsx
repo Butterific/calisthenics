@@ -98,7 +98,8 @@ export default function App() {
       </Box>
       
       <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 6 }} paragraph>
-        Turn any fitness prompt into a full, dynamic exercise video to help your <span style={{ color: '#FF0000' }}>t</span><span style={{ color: '#FF7F00' }}>r</span><span style={{ color: '#FFFF00' }}>A</span><span style={{ color: '#00FF00' }}>I</span><span style={{ color: '#0000FF' }}>n</span><span style={{ color: '#4B0082' }}>i</span><span style={{ color: '#8B00FF' }}>n</span><span style={{ color: '#FF007F' }}>g</span> 
+        Turn any fitness prompt into a full, dynamic exercise video to help your{' '}
+        <span className="rainbow-word">training</span>.
       </Typography>
 
       <Paper elevation={3} sx={{ p: 6, mb: 6, borderRadius: 3 }}>

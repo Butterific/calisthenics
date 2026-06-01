@@ -110,3 +110,26 @@ code {
   padding: 4px 8px;
   background: var(--code-bg);
 }
+
+.rainbow-word {
+  background: linear-gradient(90deg, #ff3b3b, #ff8c1a, #ffd600, #36d27c, #3b82f6, #7c3aed, #ff3b9d);
+  background-size: 300% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  font-weight: 700;
+  letter-spacing: 0.4px;
+  animation: rainbow-shift 6s ease-in-out infinite;
+}
+
+@keyframes rainbow-shift {
+  0% { background-position: 0% 50%; }
+  50% { background-position: 100% 50%; }
+  100% { background-position: 0% 50%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rainbow-word {
+    animation: none;
+  }
+}
