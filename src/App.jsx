@@ -107,9 +107,6 @@ export default function App() {
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6" fontWeight="bold">Configuration</Typography>
           </Box>
-          <Typography variant="body2" color="text.secondary" sx={{ mt: -2 }}>
-            Live API Mode enabled. This requires GEMINI and PLEX keys in your .env file or host secrets.
-          </Typography>
 
           <TextField 
             label="Workout Purpose / Prompt" 
