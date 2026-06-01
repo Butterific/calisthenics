@@ -59,9 +59,11 @@ export default function App() {
         setStatusMsg(`Got ${exercises.length} exercises. Locating stock footage...`);
         
         let videoLinks = [];
+        let usedLinks = new Set();
         for (let ex of exercises) {
-            const link = await getVideoForExercise(ex.name);
+            const link = await getVideoForExercise(ex.name, usedLinks);
             videoLinks.push(link);
+            if (link) usedLinks.add(link);
         }
 
         setStatusMsg("Initializing local video generation engine...");
@@ -87,25 +89,25 @@ export default function App() {
   };
 
   return (
-    <Container maxWidth="md" sx={{ py: 4 }}>
-      <Box display="flex" alignItems="center" gap={2} mb={2}>
-        <img src="/logo.svg" alt="Calisthenics Logo" width="48" height="48" style={{ color: '#6750A4' }} />
+    <Container maxWidth="md" sx={{ py: 8 }}>
+      <Box display="flex" alignItems="center" gap={3} mb={4}>
+        <img src="/logo.svg" alt="Calisthenics Logo" width="56" height="56" style={{ color: '#6750A4' }} />
         <Typography variant="h3" component="h1" color="primary.main" fontWeight={700} sx={{ margin: 0 }}>
           Calisthenics
         </Typography>
       </Box>
       
-      <Typography variant="subtitle1" color="text.secondary" paragraph>
+      <Typography variant="subtitle1" color="text.secondary" sx={{ mb: 6 }} paragraph>
         Turn any fitness prompt into a full, dynamic exercise video complete with looping footage, timers, title overlays, and changing background tracks. Processed 100% locally in your browser.
       </Typography>
 
-      <Paper elevation={3} sx={{ p: 4, mb: 4, borderRadius: 2 }}>
-        <Box display="flex" flexDirection="column" gap={3}>
+      <Paper elevation={3} sx={{ p: 6, mb: 6, borderRadius: 3 }}>
+        <Box display="flex" flexDirection="column" gap={4}>
           
           <Box display="flex" justifyContent="space-between" alignItems="center">
             <Typography variant="h6" fontWeight="bold">Configuration</Typography>
           </Box>
-          <Typography variant="body2" color="text.secondary">
+          <Typography variant="body2" color="text.secondary" sx={{ mt: -2 }}>
             Live API Mode enabled. This requires GEMINI and PLEX keys in your .env file or host secrets.
           </Typography>
 
@@ -118,14 +120,14 @@ export default function App() {
             disabled={loading}
           />
 
-          <Box display="flex" gap={2}>
+          <Box display="flex" gap={3} flexWrap="wrap">
             <TextField 
               label="Number of Exercises" 
               type="number" 
               value={numExercises}
               onChange={(e) => setNumExercises(Number(e.target.value))}
               disabled={loading}
-              sx={{ flex: 1 }}
+              sx={{ flex: '1 1 200px' }}
             />
             <TextField 
               label="Duration (seconds per exercise)" 
@@ -133,7 +135,7 @@ export default function App() {
               value={duration}
               onChange={(e) => setDuration(Number(e.target.value))}
               disabled={loading}
-              sx={{ flex: 1 }}
+              sx={{ flex: '1 1 200px' }}
             />
             <TextField 
               label="Quality" 
@@ -141,7 +143,7 @@ export default function App() {
               value={quality}
               onChange={(e) => setQuality(e.target.value)}
               disabled={loading}
-              sx={{ flex: 1 }}
+              sx={{ flex: '1 1 200px' }}
             >
               <MenuItem value="360p">360p (Lightning Fast - Demo)</MenuItem>
               <MenuItem value="480p">480p (Fast)</MenuItem>
@@ -155,7 +157,7 @@ export default function App() {
             size="large" 
             onClick={handleGenerate} 
             disabled={loading || !ready}
-            sx={{ py: 1.5, fontSize: '1.1rem', fontWeight: 'bold' }}
+            sx={{ py: 1.5, mt: 2, fontSize: '1.2rem', borderRadius: '9999px' }}
           >
             {loading ? "Processing..." : (ready ? "Generate Workout Video" : "Loading FFmpeg Engine...")}
           </Button>
